@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +19,12 @@ public class GamePanel extends JPanel implements Runnable{
     final int maxScreenCol = 20;
     final int maxScreenRow = 12;
 
+    public final int maxWorldCol = 50;
+    public final int maxWorldRow = maxScreenRow;
+    public final int worldWidth = maxWorldCol*tileSz;
+    public final int worldHeight = maxWorldRow*tileSz;
+
+
     final int screenWidth = tileSz * maxScreenCol; //tamanho largura da screen 1440px
     final int screenHeight = tileSz * maxScreenRow; // tamanho altura da screen 864px
 
@@ -27,23 +34,29 @@ public class GamePanel extends JPanel implements Runnable{
 
     Thread GameThread;
     JButton startButton;
-    //BufferedImage backgroundImage;
-
+    
+    KeyHandler key = new KeyHandler();
+    BufferedImage backgroundImage;
+    Player player = new Player(this, key);
+    
+    public Enemy En = new Enemy(this, player);
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true); //evitar piscar imagens atualizadas em tempo real
         this.setLayout(null);
+        this.addKeyListener(key);
+        this.setFocusable(true);
         
         // Carregar imagem de background
-        /*try {
-            backgroundImage = ImageIO.read(getClass().getResourceAsStream("/background.png"));
+        try {
+            backgroundImage = ImageIO.read(getClass().getResourceAsStream("./res/menu.png"));
         } catch (IOException e) {
             System.out.println("Erro ao carregar background: " + e.getMessage());
-        }*/
+        }
         
         startButton = new JButton("Começar o jogo");
-        startButton.setBounds(screenWidth/2 - 75, screenHeight/2 + 50, 150, 40); //posicionar botão no meio
+        startButton.setBounds(screenWidth/2 - 100, screenHeight/2 + 50, 200, 40); //posicionar botão no meio
         startButton.setFont(new Font("Arial", Font.BOLD, 16));
         startButton.addActionListener(new ActionListener() {
             @Override
@@ -91,7 +104,12 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void update() {
         if (gameState == PLAY_STATE) {
+            player.update();
+            player.andar(); // Atualizar movimento do player
+
+    
             // Adicionar os funcionamentos da gameplay
+            
         }
     }
 
@@ -99,27 +117,28 @@ public class GamePanel extends JPanel implements Runnable{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        /* 
-        if (backgroundImage != null) {
-            g.drawImage(backgroundImage, 0, 0, screenWidth, screenHeight, this);
-        }*/
+        Graphics2D g2 = (Graphics2D)g;
 
         if (gameState == TITLE_STATE) {
             // Desenhar o titulo
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 48));
-            String title = "STELLA";
-            int titleWidth = g.getFontMetrics().stringWidth(title);
-            g.drawString(title, screenWidth/2 - titleWidth/2, screenHeight/2 - 50);
             // Desenhar o subtitulo
             g.setFont(new Font("Arial", Font.PLAIN, 24));
             String subtitle = "Aperte o botão para começar";
             int subtitleWidth = g.getFontMetrics().stringWidth(subtitle);
             g.drawString(subtitle, screenWidth/2 - subtitleWidth/2, screenHeight/2);
+            if (backgroundImage != null) {
+                g.drawImage(backgroundImage, 0, 0, screenWidth, screenHeight, this);
+            }
 
         } else if (gameState == PLAY_STATE) {
-            // adicionar depois os jogadores, sprites e etc
-            
+            player.Draw(g2);
+            En.Draw(g2);
         }
     }
+    
+
+    
+    
 }
