@@ -44,23 +44,31 @@ public class TileManager {
     public void getTileImage(){
         for (int i = 0; i < tile.length; i++) {
             tile[i] = new Tile();
-            
-            // O tile 67 é uma parede (tem colisão)
-            if(i == 67){
-                tile[i].collision = true;
+        }
+
+        // Carrega apenas os tiles usados pelo mapa atual.
+        // O map.txt usa 1 para piso e 2 para parede.
+        loadTile(1, "/res/tile/floor1.png", false);
+        loadTile(2, "/res/tile/wall1.png", true);
+        loadTile(3, "/res/tile/floor2.png", false);
+        loadTile(4, "/res/tile/floor3.png", false);
+        loadTile(5, "/res/tile/wall2.png", true);
+        loadTile(6, "/res/tile/wall3.png", true);
+        loadTile(7, "/res/tile/armario.png", true);
+        loadTile(8, "/res/tile/armariodown.png", true);
+    }
+
+    private void loadTile(int index, String path, boolean collision) {
+        if (index < 0 || index >= tile.length) return;
+        tile[index].collision = collision;
+        try (InputStream is = getClass().getResourceAsStream(path)) {
+            if (is != null) {
+                tile[index].image = ImageIO.read(is);
+            } else {
+                System.err.println("Imagem do tile não encontrada: " + path);
             }
-            
-            // Tenta carregar a imagem do tile
-            String path = String.format("/res/tile/tile%03d.png", i);
-            try (InputStream is = getClass().getResourceAsStream(path)) {
-                if (is != null) {
-                    tile[i].image = ImageIO.read(is);
-                } else {
-                    System.err.println("Imagem do tile não encontrada: " + path);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -130,6 +138,9 @@ public class TileManager {
                 
                 // Índice do tile nesta posição
                 int tilenum = mapTileNum[j][i];
+                
+                if (tilenum < 0 || tilenum >= tile.length) continue;
+                if (tile[tilenum].image == null) continue;
                 
                 // Só desenha se o tile estiver dentro dos limites da tela (usando câmera)
                 if (ScreenX + gp.tileSz > 0 && ScreenX - gp.tileSz < gp.screenWidth &&

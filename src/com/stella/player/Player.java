@@ -6,6 +6,9 @@ import com.stella.entities.superObject;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /**
  * Representa o jogador controlado pelo usuário.
@@ -19,6 +22,13 @@ public class Player extends Entity {
     // Posição do jogador na tela (fixa, câmera segue ele)
     public int screenX;
     public int screenY;
+    
+    // Imagens do jogador para cada direção (2 frames cada)
+    BufferedImage back1, back2, front1, front2, left1, left2, right1, right2;
+    // Imagens idle (parado) para cada direção
+    BufferedImage idleBack, idleFront, idleLeft, idleRight;
+    int animationCounter = 0;
+    boolean isMoving = false;
     
     // Texto de status atual (ex: "Barra de medo: 50%")
     String situation;
@@ -38,6 +48,9 @@ public class Player extends Entity {
         solidArea = new Rectangle(gp.tileSz/4, gp.tileSz/2, gp.tileSz/2, gp.tileSz/2);
         
         this.key = key;
+        
+        // Carrega as imagens do jogador
+        getPlayerImages();
     }
 
     /**
@@ -55,6 +68,9 @@ public class Player extends Entity {
      * Só se move se não colidiu com nada.
      */
     public void andar(){
+        // Verifica se alguma tecla de movimento está pressionada
+        isMoving = key.leftPressed || key.rightPressed || key.upPressed || key.downPressed;
+        
         // Se não colidiu, pode se mover
         if(collisonOn == false){
             if(key.leftPressed){
@@ -116,27 +132,87 @@ public class Player extends Entity {
             return;
         }
 
-        if (minDist < 200) {
+        if (minDist < 20) {
             situation = "Barra de medo: 100%";
-        } else if (minDist < 300) {
+        } else if (minDist < 75) {
             situation = "Barra de medo: 75%";
-        } else if (minDist < 400) {
+        } else if (minDist < 150) {
             situation = "Barra de medo: 50%";
-        } else if (minDist < 500) {
+        } else if (minDist < 300) {
             situation = "Barra de medo: 20%";
         } else {
             situation = null; // fora do alcance
         }
     }
-    
 
     /**
-     * Desenha o jogador na tela.
+     * Carrega todas as imagens do jogador (movimento + idle) da pasta /res/MC.
+     */
+    public void getPlayerImages(){
+        try {
+            // Imagens de movimento
+            back1 = ImageIO.read(getClass().getResourceAsStream("/res/MC/back1.png"));
+            back2 = ImageIO.read(getClass().getResourceAsStream("/res/MC/back2.png"));
+            front1 = ImageIO.read(getClass().getResourceAsStream("/res/MC/front1.png"));
+            front2 = ImageIO.read(getClass().getResourceAsStream("/res/MC/front2.png"));
+            left1 = ImageIO.read(getClass().getResourceAsStream("/res/MC/left1.png"));
+            left2 = ImageIO.read(getClass().getResourceAsStream("/res/MC/left2.png"));
+            right1 = ImageIO.read(getClass().getResourceAsStream("/res/MC/right1.png"));
+            right2 = ImageIO.read(getClass().getResourceAsStream("/res/MC/right2.png"));
+            
+            // Imagens idle (parado)
+            idleBack = ImageIO.read(getClass().getResourceAsStream("/res/MC/backIdle.png"));
+            idleFront = ImageIO.read(getClass().getResourceAsStream("/res/MC/frontidle.png"));
+            idleLeft = ImageIO.read(getClass().getResourceAsStream("/res/MC/leftIdle.png"));
+            idleRight = ImageIO.read(getClass().getResourceAsStream("/res/MC/rightIdle.png"));
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar imagens do jogador: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Desenha o jogador na tela com a imagem apropriada.
+     * Mostra animação quando em movimento, pose idle quando parado.
      */
     public void Draw(Graphics2D g2){
-        // Desenha um quadrado rosa representando o jogador
-        g2.setColor(Color.PINK);
-        g2.fillRect(screenX, screenY, gp.tileSz, gp.tileSz);
+        // Seleciona a imagem baseada na direção e estado de movimento
+        BufferedImage image = null;
+        
+        if(isMoving){
+            // Animação de movimento
+            animationCounter++;
+            boolean isFrame2 = (animationCounter / 15) % 2 == 1; // Alterna cada 20 frames
+            
+            if(direction.equals("top")){
+                image = isFrame2 ? back2 : back1;
+            } else if(direction.equals("bottom")){
+                image = isFrame2 ? front2 : front1;
+            } else if(direction.equals("left")){
+                image = isFrame2 ? left2 : left1;
+            } else if(direction.equals("right")){
+                image = isFrame2 ? right2 : right1;
+            }
+        } else {
+            // Pose idle quando parado
+            if(direction.equals("top")){
+                image = idleBack;
+            } else if(direction.equals("bottom")){
+                image = idleFront;
+            } else if(direction.equals("left")){
+                image = idleLeft;
+            } else if(direction.equals("right")){
+                image = idleRight;
+            }
+            animationCounter = 0; // Reseta animação quando parado
+        }
+        
+        // Desenha a imagem ou um quadrado rosa como fallback
+        if(image != null){
+            g2.drawImage(image, screenX, screenY, gp.tileSz, gp.tileSz, null);
+        } else {
+            g2.setColor(Color.PINK);
+            g2.fillRect(screenX, screenY, gp.tileSz, gp.tileSz);
+        }
         
         // Mostra o status atual (nível de medo)
         if(situation != null){
