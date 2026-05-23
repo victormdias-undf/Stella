@@ -13,8 +13,8 @@ public class Enemy extends Entity{
     }
     public void Draw(Graphics2D g2){
         g2.setColor(Color.red);
-        worldX=400;
-        worldY=100;
-            g2.fillRect(worldX, worldY, gp.tileSz*2, gp.tileSz*2);
+        int ScreenX = gp.player.worldX + gp.player.screenX;
+        int ScreenY =gp.player.worldY + gp.player.screenY;
+            g2.fillRect(ScreenX, ScreenY, gp.tileSz*2, gp.tileSz*2);
     }
 }

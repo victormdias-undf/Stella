@@ -20,10 +20,10 @@ public class Player extends Entity{
     }
     public void andar(){
         if(key.leftPressed){
-            worldX+=3;
+            worldX-=3;
         }
         if(key.rightPressed){
-            worldX-=3;
+            worldX+=3;
         }
         if(key.upPressed){
             worldY-=3;

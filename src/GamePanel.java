@@ -38,7 +38,7 @@ public class GamePanel extends JPanel implements Runnable{
     KeyHandler key = new KeyHandler();
     BufferedImage backgroundImage;
     Player player = new Player(this, key);
-    
+    TileManager tileManager = new TileManager(this);
     public Enemy En = new Enemy(this, player);
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -133,8 +133,10 @@ public class GamePanel extends JPanel implements Runnable{
             }
 
         } else if (gameState == PLAY_STATE) {
+            tileManager.Draw(g2);
             player.Draw(g2);
             En.Draw(g2);
+            
         }
     }
     
