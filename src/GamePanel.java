@@ -20,9 +20,9 @@ public class GamePanel extends JPanel implements Runnable{
     final int maxScreenRow = 12;
 
     public final int maxWorldCol = 50;
-    public final int maxWorldRow = maxScreenRow;
-    public final int worldWidth = maxWorldCol*tileSz;
-    public final int worldHeight = maxWorldRow*tileSz;
+    public final int maxWorldRow = 50;
+    public final int worldWidth = maxWorldCol * tileSz;
+    public final int worldHeight = maxWorldRow * tileSz;
 
 
     final int screenWidth = tileSz * maxScreenCol; //tamanho largura da screen 1440px
@@ -39,7 +39,7 @@ public class GamePanel extends JPanel implements Runnable{
     BufferedImage backgroundImage;
     Player player = new Player(this, key);
     TileManager tileManager = new TileManager(this);
-    public Enemy En = new Enemy(this, player);
+    
     public GamePanel(){
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
@@ -135,7 +135,7 @@ public class GamePanel extends JPanel implements Runnable{
         } else if (gameState == PLAY_STATE) {
             tileManager.Draw(g2);
             player.Draw(g2);
-            En.Draw(g2);
+            
             
         }
     }

@@ -20,6 +20,9 @@ public class TileManager {
     public void getTileImage(){
         for (int i = 0; i < tile.length; i++) {
             tile[i] = new Tile();
+            if(i==67){
+                tile[i].collision=true;
+            }
             String path = String.format("/res/tile/tile%03d.png", i);
             try (InputStream is = getClass().getResourceAsStream(path)) {
                 if (is != null) {

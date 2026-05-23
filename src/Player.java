@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 
 public class Player extends Entity{
     GamePanel gp;
@@ -12,11 +13,12 @@ public class Player extends Entity{
         screenX = gp.screenWidth/2-(gp.tileSz/2);
         screenY = gp.screenHeight/2-(gp.tileSz/2);
         worldX=screenX;
+        solidArea = new Rectangle(6,12, 12, 12);
         worldY=screenY;
         this.key = key;
     }
     public void update(){
-        this.Collide();
+        
     }
     public void andar(){
         if(key.leftPressed){
@@ -32,18 +34,7 @@ public class Player extends Entity{
             worldY+=3;
         }
     }
-    public void Collide(){
-        float distancia = gp.En.worldX-this.worldX-gp.tileSz;
-        if(distancia<200 && distancia>=100){
-            System.out.println("Barra de medo em 30%");
-        }else if(distancia<100 && distancia>=50){
-            System.out.println("Barra de medo em 50%");
-        }else if(distancia<50 && distancia>0){
-            System.out.println("Barra de medo em 80%");
-        }else if(distancia<=0){
-            System.out.println("Game Over");
-        }
-    }
+    
     public void Draw(Graphics2D g2){
         g2.setColor(Color.PINK);
         g2.fillRect(screenX, screenY, gp.tileSz, gp.tileSz);
