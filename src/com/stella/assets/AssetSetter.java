@@ -27,8 +27,8 @@ public class AssetSetter {
         gp.obj[0].WorldY = 3 * gp.tileSz + gp.tileSz/2;
         
         // Define o tamanho do inimigo
-        gp.obj[0].height = 5 * gp.tileSz;
-        gp.obj[0].width = 5 * gp.tileSz;
+        gp.obj[0].height = 3 * gp.tileSz;
+        gp.obj[0].width = 3 * gp.tileSz;
         
         // Marca como inimigo (para o sistema de medo do jogador)
         gp.obj[0].enemy = true;

@@ -132,13 +132,13 @@ public class Player extends Entity {
             return;
         }
 
-        if (minDist < 20) {
+        if (minDist < 200) {
             situation = "Barra de medo: 100%";
-        } else if (minDist < 75) {
-            situation = "Barra de medo: 75%";
-        } else if (minDist < 150) {
-            situation = "Barra de medo: 50%";
         } else if (minDist < 300) {
+            situation = "Barra de medo: 75%";
+        } else if (minDist < 400) {
+            situation = "Barra de medo: 50%";
+        } else if (minDist < 500) {
             situation = "Barra de medo: 20%";
         } else {
             situation = null; // fora do alcance
@@ -182,26 +182,35 @@ public class Player extends Entity {
             // Animação de movimento
             animationCounter++;
             boolean isFrame2 = (animationCounter / 15) % 2 == 1; // Alterna cada 20 frames
-            
-            if(direction.equals("top")){
-                image = isFrame2 ? back2 : back1;
-            } else if(direction.equals("bottom")){
-                image = isFrame2 ? front2 : front1;
-            } else if(direction.equals("left")){
-                image = isFrame2 ? left2 : left1;
-            } else if(direction.equals("right")){
-                image = isFrame2 ? right2 : right1;
+            switch(direction){
+                case "top":
+                    image = isFrame2 ? back2 : back1;
+                    break;
+                case "bottom":
+                    image = isFrame2 ? front2 : front1;
+                    break;
+                case "left":
+                    image = isFrame2 ? left2 : left1;
+                    break;
+                case "right":
+                    image = isFrame2 ? right2 : right1;
+                    break;
             }
         } else {
             // Pose idle quando parado
-            if(direction.equals("top")){
-                image = idleBack;
-            } else if(direction.equals("bottom")){
-                image = idleFront;
-            } else if(direction.equals("left")){
-                image = idleLeft;
-            } else if(direction.equals("right")){
-                image = idleRight;
+            switch(direction){
+                case "top":
+                    image = idleBack;
+                    break;
+                case "bottom":
+                    image = idleFront;
+                    break;
+                case "left":
+                    image = idleLeft;
+                    break;
+                case "right":
+                    image = idleRight;
+                    break;
             }
             animationCounter = 0; // Reseta animação quando parado
         }
